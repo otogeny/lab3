@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Chat</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+
+      form {
+        width: 100%;
+        height: 21px;
+        padding: 3px;
+        border-bottom: 1px solid black;
+        display: flex;
+        position: fixed;
+        top: 0;
+      }
+
+      form * {
+        margin: 0 3px;
+      }
+
+      form #message {
+        flex-grow: 1;
+      }
+
+      ul {
+        margin-top: 40px;
+        list-style: none;
+      }
+  </style>
+  </head>
+  <body>
+    <div>
+      <label for="name">Name:</label>
+      <input type="text" id="name" size = "30%"/>
+      <label for="message">Message:</label>
+      <input type="text" id="message" size = "100%"/>
+      <button onclick = "sendMessage()">Send</button>
+      
+       <ul id="messagesList">
+       </ul>
+      
+      <script src = "/socket.io/socket.io.js"></script>
+      <script>
+        //<button type = "button" class = "btn btn-success btn-lg btn-block send">Send</button>
+        var socket = io(document.URL);
+        
+        function sendMessage(){
+          var mes = {name: document.getElementById("name").value,  message: document.getElementById("message").value};
+          if(mes.name !== "" && mes.message !== ""){
+            socket.emit('send message',mes);
+            console.log('Message sended')
+          }
+        }
+        
+        socket.on('server message', function(data){
+          adder(data);
+          console.log(data);
+        });
+        
+        function adder(message) {
+          // var ul = document.getElementById("messagesList");
+          // var li = document.createElement("li");
+          // li.appendChild(document.createTextNode(message.name + ": " + message.message));
+          // ul.appendChild(li)
+          
+          var str = `<li> <b>${message.name}</b>: ${message.message}</li>`
+
+          document.getElementById('messagesList').innerHTML = str + document.getElementById('messagesList').innerHTML;
+        }
+        
+        // document.querySelector('.send')
+        //   .addEventListener(
+        //   'click', ev => {
+        //   ev.preventDefault();
+        //   console.log('Message sended');
+        //   socket.emit('send message','MESSAGE TEXT');
+        //   });
+      </script>
+    </div>
+  </body>
+</html>
